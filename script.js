@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextWeekButton = document.getElementById('nextWeek');
     const currentWeekElement = document.getElementById('currentWeek');
 
-    // Exercise database with image icons (all use media/default.png for now)
-    const defaultImg = 'media/bench.webp';
+    // Exercise database with image icons (all use media/benchpress.jpg for now)
+    const defaultImg = 'media/benchpress.jpg';
     const exercises = {
         chest: [
             { name: 'Bench Press', img: defaultImg },
