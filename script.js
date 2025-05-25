@@ -11,30 +11,36 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     };
 
+    // Function to create task element
+    const createTaskElement = (task, index) => {
+        const li = document.createElement('li');
+        li.className = `task-item ${task.completed ? 'completed' : ''}`;
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = task.completed;
+        checkbox.addEventListener('change', () => toggleTask(index));
+
+        const span = document.createElement('span');
+        span.textContent = task.text;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'delete-btn';
+        deleteButton.textContent = '×';
+        deleteButton.addEventListener('click', () => deleteTask(index));
+
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(deleteButton);
+        return li;
+    };
+
     // Function to render tasks
     const renderTasks = () => {
         taskList.innerHTML = '';
         tasks.forEach((task, index) => {
-            const li = document.createElement('li');
-            li.className = `task-item ${task.completed ? 'completed' : ''}`;
-            
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = task.completed;
-            checkbox.addEventListener('change', () => toggleTask(index));
-
-            const span = document.createElement('span');
-            span.textContent = task.text;
-
-            const deleteButton = document.createElement('button');
-            deleteButton.className = 'delete-btn';
-            deleteButton.textContent = 'Delete';
-            deleteButton.addEventListener('click', () => deleteTask(index));
-
-            li.appendChild(checkbox);
-            li.appendChild(span);
-            li.appendChild(deleteButton);
-            taskList.appendChild(li);
+            const taskElement = createTaskElement(task, index);
+            taskList.appendChild(taskElement);
         });
     };
 
@@ -46,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             taskInput.value = '';
             saveTasks();
             renderTasks();
+            taskInput.focus();
         }
     };
 
@@ -56,11 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTasks();
     };
 
-    // Function to delete a task
+    // Function to delete a task with animation
     const deleteTask = (index) => {
-        tasks.splice(index, 1);
-        saveTasks();
-        renderTasks();
+        const taskElement = taskList.children[index];
+        taskElement.style.animation = 'fadeOut 0.3s ease forwards';
+        
+        setTimeout(() => {
+            tasks.splice(index, 1);
+            saveTasks();
+            renderTasks();
+        }, 300);
     };
 
     // Event listeners
@@ -70,6 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
             addTask();
         }
     });
+
+    // Focus input on load
+    taskInput.focus();
 
     // Initial render
     renderTasks();
