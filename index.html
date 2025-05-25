@@ -24,7 +24,18 @@
                 <option value="saturday">Saturday</option>
                 <option value="sunday" disabled>Sunday (Rest Day)</option>
             </select>
-            <input type="text" id="taskInput" placeholder="Add exercise...">
+            <select id="muscleGroupSelect">
+                <option value="">Select Muscle Group</option>
+                <option value="chest">Chest</option>
+                <option value="back">Back</option>
+                <option value="shoulders">Shoulders</option>
+                <option value="legs">Legs</option>
+                <option value="arms">Arms</option>
+                <option value="core">Core</option>
+            </select>
+            <select id="exerciseSelect" disabled>
+                <option value="">Select Exercise</option>
+            </select>
             <input type="text" id="setsInput" placeholder="Sets" class="small-input">
             <input type="text" id="repsInput" placeholder="Reps" class="small-input">
             <button id="addTask">Add</button>

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const taskInput = document.getElementById('taskInput');
+    const muscleGroupSelect = document.getElementById('muscleGroupSelect');
+    const exerciseSelect = document.getElementById('exerciseSelect');
     const setsInput = document.getElementById('setsInput');
     const repsInput = document.getElementById('repsInput');
     const daySelect = document.getElementById('daySelect');
@@ -7,6 +8,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevWeekButton = document.getElementById('prevWeek');
     const nextWeekButton = document.getElementById('nextWeek');
     const currentWeekElement = document.getElementById('currentWeek');
+
+    // Exercise database with image icons (all use media/default.png for now)
+    const defaultImg = 'media/bench.webp';
+    const exercises = {
+        chest: [
+            { name: 'Bench Press', img: defaultImg },
+            { name: 'Incline Bench Press', img: defaultImg },  
+            { name: 'Decline Bench Press', img: defaultImg },
+            { name: 'Dumbbell Flyes', img: defaultImg },
+            { name: 'Cable Flyes', img: defaultImg },
+            { name: 'Push-ups', img: defaultImg },
+            { name: 'Dumbbell Press', img: defaultImg },
+            { name: 'Machine Chest Press', img: defaultImg }
+        ],
+        back: [
+            { name: 'Pull-ups', img: defaultImg },
+            { name: 'Lat Pulldowns', img: defaultImg },
+            { name: 'Barbell Rows', img: defaultImg },
+            { name: 'Dumbbell Rows', img: defaultImg },
+            { name: 'T-Bar Rows', img: defaultImg },
+            { name: 'Face Pulls', img: defaultImg },
+            { name: 'Deadlifts', img: defaultImg },
+            { name: 'Cable Rows', img: defaultImg }
+        ],
+        shoulders: [
+            { name: 'Overhead Press', img: defaultImg },
+            { name: 'Lateral Raises', img: defaultImg },
+            { name: 'Front Raises', img: defaultImg },
+            { name: 'Reverse Flyes', img: defaultImg },
+            { name: 'Arnold Press', img: defaultImg },
+            { name: 'Upright Rows', img: defaultImg },
+            { name: 'Face Pulls', img: defaultImg },
+            { name: 'Shrugs', img: defaultImg }
+        ],
+        legs: [
+            { name: 'Squats', img: defaultImg },
+            { name: 'Deadlifts', img: defaultImg },
+            { name: 'Leg Press', img: defaultImg },
+            { name: 'Lunges', img: defaultImg },
+            { name: 'Leg Extensions', img: defaultImg },
+            { name: 'Leg Curls', img: defaultImg },
+            { name: 'Calf Raises', img: defaultImg },
+            { name: 'Romanian Deadlifts', img: defaultImg }
+        ],
+        arms: [
+            { name: 'Bicep Curls', img: defaultImg },
+            { name: 'Tricep Pushdowns', img: defaultImg },
+            { name: 'Hammer Curls', img: defaultImg },
+            { name: 'Skull Crushers', img: defaultImg },
+            { name: 'Preacher Curls', img: defaultImg },
+            { name: 'Diamond Push-ups', img: defaultImg },
+            { name: 'Concentration Curls', img: defaultImg },
+            { name: 'Tricep Dips', img: defaultImg }
+        ],
+        core: [
+            { name: 'Planks', img: defaultImg },
+            { name: 'Crunches', img: defaultImg },
+            { name: 'Russian Twists', img: defaultImg },
+            { name: 'Leg Raises', img: defaultImg },
+            { name: 'Mountain Climbers', img: defaultImg },
+            { name: 'Ab Wheel Rollouts', img: defaultImg },
+            { name: 'Cable Woodchops', img: defaultImg },
+            { name: 'Hanging Leg Raises', img: defaultImg }
+        ]
+    };
 
     let currentWeek = 1;
     let workouts = JSON.parse(localStorage.getItem('workouts')) || {};
@@ -23,6 +89,24 @@ document.addEventListener('DOMContentLoaded', () => {
             sunday: []
         };
     }
+
+    // Function to populate exercise select based on muscle group
+    const populateExercises = () => {
+        const muscleGroup = muscleGroupSelect.value;
+        exerciseSelect.innerHTML = '<option value="">Select Exercise</option>';
+        
+        if (muscleGroup && exercises[muscleGroup]) {
+            exerciseSelect.disabled = false;
+            exercises[muscleGroup].forEach(exercise => {
+                const option = document.createElement('option');
+                option.value = JSON.stringify(exercise);
+                option.innerHTML = `<img src='${exercise.img}' class='exercise-img-option' alt='icon'> ${exercise.name}`;
+                exerciseSelect.appendChild(option);
+            });
+        } else {
+            exerciseSelect.disabled = true;
+        }
+    };
 
     // Function to save workouts to localStorage
     const saveWorkouts = () => {
@@ -44,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const exerciseName = document.createElement('span');
         exerciseName.className = 'exercise-name';
-        exerciseName.textContent = workout.name;
+        exerciseName.innerHTML = `<img src='${workout.img}' class='exercise-img' alt='icon'> ${workout.name}`;
 
         const exerciseSetsReps = document.createElement('span');
         exerciseSetsReps.className = 'exercise-sets-reps';
@@ -85,26 +169,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to add a new workout
     const addWorkout = () => {
-        const name = taskInput.value.trim();
+        const exerciseData = JSON.parse(exerciseSelect.value);
         const sets = setsInput.value.trim();
         const reps = repsInput.value.trim();
         const day = daySelect.value;
 
-        if (name && sets && reps && day !== 'sunday') {
+        if (exerciseData && sets && reps && day !== 'sunday') {
             const workout = {
-                name,
+                name: exerciseData.name,
+                img: exerciseData.img,
                 sets,
                 reps,
                 completed: false
             };
 
             workouts[currentWeek][day].push(workout);
-            taskInput.value = '';
+            exerciseSelect.value = '';
             setsInput.value = '';
             repsInput.value = '';
+            muscleGroupSelect.value = '';
+            exerciseSelect.disabled = true;
             saveWorkouts();
             renderDayWorkouts(day);
-            taskInput.focus();
+            muscleGroupSelect.focus();
         }
     };
 
@@ -153,8 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Event listeners
+    muscleGroupSelect.addEventListener('change', populateExercises);
     addTaskButton.addEventListener('click', addWorkout);
-    taskInput.addEventListener('keypress', (e) => {
+    exerciseSelect.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             addWorkout();
         }
@@ -162,8 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
     prevWeekButton.addEventListener('click', () => changeWeek(-1));
     nextWeekButton.addEventListener('click', () => changeWeek(1));
 
-    // Focus input on load
-    taskInput.focus();
+    // Focus muscle group select on load
+    muscleGroupSelect.focus();
 
     // Initial render
     renderAllWorkouts();
