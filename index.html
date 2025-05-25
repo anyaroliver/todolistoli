@@ -3,19 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List</title>
+    <title>Gym Bro Workout Schedule</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Todo List</h1>
+        <h1>Gym Bro Workout Schedule</h1>
+        <div class="week-selector">
+            <button id="prevWeek">←</button>
+            <h2 id="currentWeek">Week 1</h2>
+            <button id="nextWeek">→</button>
+        </div>
         <div class="input-container">
-            <input type="text" id="taskInput" placeholder="Add a new task...">
+            <select id="daySelect">
+                <option value="monday">Monday</option>
+                <option value="tuesday">Tuesday</option>
+                <option value="wednesday">Wednesday</option>
+                <option value="thursday">Thursday</option>
+                <option value="friday">Friday</option>
+                <option value="saturday">Saturday</option>
+                <option value="sunday" disabled>Sunday (Rest Day)</option>
+            </select>
+            <input type="text" id="taskInput" placeholder="Add exercise...">
+            <input type="text" id="setsInput" placeholder="Sets" class="small-input">
+            <input type="text" id="repsInput" placeholder="Reps" class="small-input">
             <button id="addTask">Add</button>
         </div>
-        <ul id="taskList">
-            <!-- Tasks will be added here dynamically -->
-        </ul>
+        <div class="days-container">
+            <div class="day-section" id="monday">
+                <h3>Monday</h3>
+                <ul class="task-list"></ul>
+            </div>
+            <div class="day-section" id="tuesday">
+                <h3>Tuesday</h3>
+                <ul class="task-list"></ul>
+            </div>
+            <div class="day-section" id="wednesday">
+                <h3>Wednesday</h3>
+                <ul class="task-list"></ul>
+            </div>
+            <div class="day-section" id="thursday">
+                <h3>Thursday</h3>
+                <ul class="task-list"></ul>
+            </div>
+            <div class="day-section" id="friday">
+                <h3>Friday</h3>
+                <ul class="task-list"></ul>
+            </div>
+            <div class="day-section" id="saturday">
+                <h3>Saturday</h3>
+                <ul class="task-list"></ul>
+            </div>
+            <div class="day-section rest-day" id="sunday">
+                <h3>Sunday</h3>
+                <p class="rest-message">Rest Day 💪</p>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
