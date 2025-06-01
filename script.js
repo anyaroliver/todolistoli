@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextWeekButton = document.getElementById('nextWeek');
     const currentWeekElement = document.getElementById('currentWeek');
 
-    // Exercise database with image icons (all use media/benchpress.jpg for now)
-    const defaultImg = 'media/benchpress.jpg';
+    // Exercise database with image icons (all use media/gym/benchpress.jpg for now)
+    const defaultImg = 'media/gym/benchpress.jpg';
     const exercises = {
         chest: [
             { name: 'Bench Press', img: defaultImg },
@@ -255,4 +255,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial render
     renderAllWorkouts();
+
+    // === AI Chatbot Logic ===
+    const chatHistory = document.getElementById('chat-history');
+    const chatInput = document.getElementById('chat-input');
+    const sendChatBtn = document.getElementById('send-chat');
+
+    function appendMessage(role, content) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message ' + (role === 'user' ? 'user' : 'bot');
+        msgDiv.textContent = content;
+        chatHistory.appendChild(msgDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const userMsg = chatInput.value.trim();
+        if (!userMsg) return;
+        appendMessage('user', userMsg);
+        chatInput.value = '';
+        appendMessage('bot', '...'); // Loading indicator
+
+        try {
+            // Call your backend endpoint here
+            // Example: const response = await fetch('/api/chat', ...)
+            // For now, we'll use a placeholder
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userMsg })
+            });
+            const data = await response.json();
+            // Remove loading
+            chatHistory.removeChild(chatHistory.lastChild);
+            appendMessage('bot', data.reply || '[No response]');
+        } catch (err) {
+            chatHistory.removeChild(chatHistory.lastChild);
+            appendMessage('bot', 'Error: Could not reach AI backend.');
+        }
+    }
+
+    sendChatBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendMessage();
+    });
 }); 
